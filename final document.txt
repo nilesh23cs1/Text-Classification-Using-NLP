@@ -1,0 +1,106 @@
+
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import classification_report
+
+import pandas as pd
+import numpy as np
+from pandas import DataFrame
+
+df=pd.read_csv("https://raw.githubusercontent.com/nilesh23cs1/Dataset-for-ML/main/LabelledData%20(1)%20(1).txt", header=None, sep='\n')
+k1=[]
+k2=[]
+l=df.values.tolist()
+
+
+for list in l:
+  for element in list:
+    element=element.split(",,,")
+    element[0]=element[0].lower()
+    element[1]=element[1].lower()
+    k1.append(element[0].strip())
+    k2.append(element[1].strip())
+
+
+
+
+k1=np.array(k1)
+k2=np.array(k2)
+k1=np.stack((k1,k2), axis=1)
+
+
+
+
+
+l=k1.tolist()
+df=DataFrame(l,columns = ['post', 'tags'])
+#df=df[df.tags != 'unknown']
+
+
+#print(df)
+
+
+
+
+############################
+###########################
+
+
+
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import SGDClassifier
+
+
+
+
+
+
+
+X = df.post
+y = df.tags
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state = 42)
+
+
+
+
+
+
+sgd = Pipeline([('vect', TfidfVectorizer(ngram_range=(1,2),stop_words={"english"})),
+                ('clf', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3, random_state=42, max_iter=5, tol=None)),
+               ])
+sgd.fit(X_train, y_train)
+
+y_pred = sgd.predict(X_test)
+
+
+
+
+
+
+
+print('accuracy %s' % accuracy_score(y_pred, y_test))
+my_tags = ["who","what","when","affirmation","unknown"]
+print(classification_report(y_test, y_pred,target_names=my_tags))
+
+
+
+
+
+
+########################################3
+###########################################
+#########################################
+
+
+
+
+
+xt= input("enter line")
+temp=[]
+temp.append(xt)
+yt = sgd.predict(temp)
+print(yt[0])
